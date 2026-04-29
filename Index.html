@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>World Card — Onboarding Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:           #0A1128;
+    --bg-2:         #0E1836;
+    --bg-3:         #15234A;
+    --panel:        #FFFFFF;
+    --panel-soft:   #F5F7FB;
+    --ink:          #0A1128;
+    --ink-2:        #3B4A6B;
+    --ink-3:        #7A8AAB;
+    --line:         #E4E9F2;
+    --accent:       #6C5CE7;
+    --accent-2:     #00C2A8;
+    --accent-3:     #F5A524;
+    --danger:       #D64545;
+    --star-faint:   rgba(108,92,231,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 10%, rgba(108,92,231,0.18), transparent 50%),
+      radial-gradient(ellipse at 90% 90%, rgba(0,194,168,0.10), transparent 50%);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    background: rgba(10,17,40,0.6);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Fraunces', serif;
+    color: #fff;
+    font-size: 22px; font-weight: 600; letter-spacing: -0.02em;
+  }
+  .brand-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--accent));
+    position: relative;
+  }
+  .brand-mark::after {
+    content: ''; position: absolute; inset: 5px; border-radius: 50%;
+    background: var(--bg);
+  }
+  .topbar-right { display: flex; gap: 20px; align-items: center; }
+  .topbar-right .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent-2);
+    padding: 5px 10px; border-radius: 100px;
+    border: 1px solid rgba(0,194,168,0.3);
+    background: rgba(0,194,168,0.06);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .reset-btn {
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6); padding: 6px 14px; border-radius: 100px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .reset-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+  /* ---------- layout ---------- */
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 28px;
+    min-height: calc(100vh - 70px);
+  }
+
+  /* ---------- main column ---------- */
+  .main {
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 36px 44px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- intro (journey selector) ---------- */
+  .intro { animation: fadeUp 0.4s ease; }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .intro h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 48px; font-weight: 600; line-height: 1.05;
+    letter-spacing: -0.02em; color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .intro h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .intro p.lede {
+    font-size: 16px; line-height: 1.55; color: var(--ink-2);
+    max-width: 620px; margin-bottom: 36px;
+  }
+  .journey-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin-top: 20px;
+  }
+  .journey-card {
+    background: var(--panel-soft);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .journey-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent); opacity: 0; transition: opacity 0.2s;
+  }
+  .journey-card.worker::before { background: var(--accent-2); }
+  .journey-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(10,17,40,0.12); }
+  .journey-card:hover::before { opacity: 1; }
+  .journey-card .icon-wrap {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .journey-card.worker .icon-wrap { background: var(--accent-2); }
+  .journey-card h3 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 22px; color: var(--ink); letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .journey-card .sub {
+    font-size: 13px; color: var(--ink-3); margin-bottom: 16px;
+  }
+  .journey-card .meta {
+    display: flex; gap: 18px; font-size: 12px; color: var(--ink-2);
+  }
+  .journey-card .meta span {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .journey-card .meta .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  .journey-card.worker .meta .dot { background: var(--accent-2); }
+
+  .intro .trust {
+    margin-top: 40px; padding-top: 22px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 30px; font-size: 11px; color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .intro .trust span { display: flex; align-items: center; gap: 8px; }
+  .intro .trust span::before {
+    content: ''; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent-2);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center / contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center / contain no-repeat;
+  }
+
+  /* ---------- step view ---------- */
+  .step { display: none; animation: fadeUp 0.4s ease; }
+  .step.active { display: block; }
+  .step-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 28px;
+  }
+  .step-header .left {}
+  .step-header h2 {
+    font-family: 'Fraunces', serif; font-size: 32px; font-weight: 600;
+    line-height: 1.15; letter-spacing: -0.02em; color: var(--ink);
+    margin-top: 4px;
+  }
+  .step-header .right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--ink-3);
+    text-align: right;
+  }
+  .step-header .right b { color: var(--ink); font-weight: 600; }
+
+  /* progress rail */
+  .rail {
+    display: flex; gap: 6px; margin-bottom: 34px;
+  }
+  .rail .tick {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: var(--line);
+    transition: background 0.3s;
+  }
+  .rail .tick.done { background: var(--accent-2); }
+  .rail .tick.current { background: var(--accent); }
+
+  /* ---------- upload area ---------- */
+  .upload-zone {
+    border: 2px dashed var(--line);
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    background: var(--panel-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(108,92,231,0.04);
+  }
+  .upload-zone .up-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(108,92,231,0.1); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .upload-zone h4 {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .upload-zone p {
+    font-size: 13px; color: var(--ink-3);
+  }
+  .upload-zone .filetag {
+    display: inline-block; margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    background: #fff; padding: 4px 10px; border-radius: 100px;
+    color: var(--ink-2); border: 1px solid var(--line);
+    letter-spacing: 0.05em;
+  }
+
+  .sample-docs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-top: 18px;
+  }
+  .sample-doc {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px; cursor: pointer; transition: all 0.15s;
+    text-align: left;
+  }
+  .sample-doc:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .sample-doc .sd-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sample-doc .sd-title {
+    font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3;
+  }
+  .sample-doc .sd-sub {
+    font-size: 11px; color: var(--ink-3); margin-top: 3px;
+  }
+
+  /* parsing / verifying state */
+  .parsing {
+    background: var(--panel-soft);
+    border-radius: 14px; padding: 28px;
+    margin-top: 18px;
+    display: none;
+  }
+  .parsing.active { display: block; animation: fadeUp 0.3s ease; }
+  .parsing .file-row {
+    display: flex; align-items: center; gap: 14px;
+    padding-bottom: 18px; border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+  }
+  .parsing .file-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .parsing .file-meta { flex: 1; }
+  .parsing .file-meta .fname { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .parsing .file-meta .fsize {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3);
+  }
+  .parsing .file-check { color: var(--accent-2); font-size: 22px; }
+
+  .checks { display: grid; gap: 10px; }
+  .check-row {
+    display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; align-items: center;
+    padding: 10px 0;
+    opacity: 0.35;
+    transition: opacity 0.3s;
+  }
+  .check-row.active { opacity: 1; }
+  .check-row.done { opacity: 1; }
+  .check-row .spinner {
+    width: 18px; height: 18px; border: 2px solid var(--line);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  .check-row.active .spinner { display: block; }
+  .check-row .tick-mark {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-2); color: #fff;
+    display: none; align-items: center; justify-content: center; font-size: 12px;
+  }
+  .check-row.done .tick-mark { display: flex; }
+  .check-row .pending {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--line);
+    display: block;
+  }
+  .check-row.active .pending, .check-row.done .pending { display: none; }
+  .check-row .label { font-size: 13px; color: var(--ink); font-weight: 500; }
+  .check-row .label .sub { color: var(--ink-3); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+  .check-row .result {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-2);
+    display: none;
+  }
+  .check-row.done .result { display: block; }
+
+  /* ---------- controls ---------- */
+  .controls {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 30px;
+  }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 13px 28px; border-radius: 100px; border: none;
+    cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary {
+    background: var(--ink); color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--accent); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent; color: var(--ink-3);
+  }
+  .btn-ghost:hover { color: var(--ink); }
+
+  /* ---------- signal panel (right) ---------- */
+  .side {
+    background: var(--bg-2);
+    border-radius: 20px;
+    padding: 28px;
+    color: #fff;
+    position: sticky; top: 100px;
+    height: fit-content;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .side h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent-2);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .score-display {
+    text-align: center; padding: 20px 0 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 20px;
+  }
+  .score-ring {
+    width: 130px; height: 130px; margin: 0 auto 12px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .ring-bg { stroke: rgba(255,255,255,0.08); }
+  .score-ring .ring-fill {
+    stroke: var(--accent);
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s;
+  }
+  .score-ring .score-num {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600;
+    line-height: 1;
+  }
+  .score-ring .score-num .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: rgba(255,255,255,0.5);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px;
+  }
+  .tier-pill {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 100px;
+    background: rgba(108,92,231,0.2); color: var(--accent);
+  }
+
+  .sig-list { margin-bottom: 20px; }
+  .sig-list h4 {
+    font-size: 11px; color: rgba(255,255,255,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .sig-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    opacity: 0.3;
+    transition: opacity 0.4s;
+  }
+  .sig-row.on { opacity: 1; }
+  .sig-row .sig-name { font-size: 12px; color: rgba(255,255,255,0.85); }
+  .sig-row .sig-detail {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: rgba(255,255,255,0.4); margin-top: 2px;
+  }
+  .sig-row .sig-weight {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent-2); font-weight: 500; align-self: center;
+  }
+
+  .decision-box {
+    background: rgba(0,194,168,0.08);
+    border: 1px solid rgba(0,194,168,0.2);
+    border-radius: 10px; padding: 12px;
+    font-size: 11px; color: rgba(255,255,255,0.75);
+    font-family: 'JetBrains Mono', monospace; line-height: 1.55;
+    display: none;
+  }
+  .decision-box.on { display: block; }
+
+  /* ---------- final / approval ---------- */
+  .approval { display: none; text-align: center; padding: 30px 0; }
+  .approval.active { display: block; animation: fadeUp 0.5s ease; }
+  .approval .badge-large {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-2), #00A892);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 18px 44px rgba(0,194,168,0.35);
+    animation: pop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .approval h2 {
+    font-family: 'Fraunces', serif; font-size: 40px; font-weight: 600;
+    letter-spacing: -0.02em; color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .approval h2 em { color: var(--accent); font-style: italic; font-weight: 400; }
+  .approval .subline {
+    font-size: 15px; color: var(--ink-3); margin-bottom: 36px;
+  }
+
+  .card-preview {
+    width: 340px; height: 210px;
+    margin: 0 auto 30px;
+    border-radius: 18px;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(108,92,231,0.65), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,194,168,0.45), transparent 55%),
+      linear-gradient(135deg, #0A1128, #15234A);
+    color: #fff; padding: 24px; text-align: left;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(10,17,40,0.25);
+    animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  .card-preview::before {
+    content: ''; position: absolute; top: -30%; left: -30%;
+    width: 160%; height: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transform: rotate(-20deg);
+    animation: shine 3.5s ease-in-out infinite;
+  }
+  .card-preview .card-brand {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .card-preview .card-chip {
+    position: absolute; top: 70px; left: 24px;
+    width: 36px; height: 28px; border-radius: 5px;
+    background: linear-gradient(135deg, #C9A85A, #8E7233);
+  }
+  .card-preview .card-num {
+    position: absolute; bottom: 52px; left: 24px; right: 24px;
+    font-family: 'JetBrains Mono', monospace; font-size: 16px;
+    letter-spacing: 0.14em;
+  }
+  .card-preview .card-foot {
+    position: absolute; bottom: 18px; left: 24px; right: 24px;
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .offer-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-bottom: 28px;
+  }
+  .offer-card {
+    background: var(--panel-soft); border-radius: 12px; padding: 20px;
+    text-align: left; position: relative; overflow: hidden;
+  }
+  .offer-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent);
+  }
+  .offer-card.teal::before { background: var(--accent-2); }
+  .offer-card.amber::before { background: var(--accent-3); }
+  .offer-card .oc-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .offer-card .oc-value {
+    font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600;
+    color: var(--ink); line-height: 1; margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .offer-card .oc-note {
+    font-size: 11px; color: var(--ink-3); line-height: 1.4;
+  }
+
+  .deposit-schedule {
+    background: var(--panel-soft); border-radius: 14px; padding: 22px;
+    margin-bottom: 20px;
+  }
+  .deposit-schedule h4 {
+    font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+    color: var(--ink); margin-bottom: 4px; text-align: left;
+  }
+  .deposit-schedule .ds-sub {
+    font-size: 12px; color: var(--ink-3); text-align: left; margin-bottom: 18px;
+  }
+  .ds-timeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    position: relative;
+  }
+  .ds-timeline::before {
+    content: ''; position: absolute; top: 10px; left: 12.5%; right: 12.5%;
+    height: 2px; background: var(--line); z-index: 0;
+  }
+  .ds-step {
+    position: relative; z-index: 1; text-align: center;
+  }
+  .ds-step .ds-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: 2px solid var(--accent);
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 600; color: var(--accent);
+  }
+  .ds-step.current .ds-dot { background: var(--accent); color: #fff; }
+  .ds-step.future .ds-dot { border-color: var(--ink-3); color: var(--ink-3); }
+  .ds-step .ds-month {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-3);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .ds-step .ds-amount {
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+    color: var(--ink);
+  }
+  .ds-step.future .ds-amount { color: var(--ink-3); }
+
+  .compliance {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--ink-3); letter-spacing: 0.03em; line-height: 1.7;
+    padding-top: 20px; border-top: 1px solid var(--line);
+    text-align: left;
+  }
+
+  /* ---------- animations ---------- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pop {
+    from { transform: scale(0.4); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) rotateY(-15deg); }
+    to { opacity: 1; transform: translateY(0) rotateY(0); }
+  }
+  @keyframes shine {
+    0%, 100% { left: -130%; }
+    50% { left: 50%; }
+  }
+
+  /* responsive */
+  @media (max-width: 1100px) {
+    .stage { grid-template-columns: 1fr; }
+    .side { position: relative; top: 0; max-height: none; }
+  }
+  @media (max-width: 640px) {
+    .main { padding: 24px 22px; }
+    .intro h1, .approval h2 { font-size: 32px; }
+    .step-header h2 { font-size: 24px; }
+    .journey-grid { grid-template-columns: 1fr; }
+    .offer-grid { grid-template-columns: 1fr; }
+    .ds-timeline { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ds-timeline::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    World Card
+  </div>
+  <div class="topbar-right">
+    <span class="pill">● Demo · Sandbox</span>
+    <button class="reset-btn" id="resetBtn">Start over</button>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div class="stage">
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- INTRO -->
+    <div class="intro" id="intro">
+      <div class="kicker">Onboarding · 4 minutes</div>
+      <h1>Credit, the moment <em>you land.</em></h1>
+      <p class="lede">
+        World Card evaluates your future, not your U.S. past. Upload a few documents,
+        and we will issue a credit card with a deposit that steps down as you pay on
+        time. Pick the journey that matches you.
+      </p>
+
+      <div class="journey-grid">
+        <div class="journey-card student" data-journey="student">
+          <div class="icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <h3>Graduate or PhD Student</h3>
+          <div class="sub">Admitted or enrolled at a U.S. university</div>
+          <div class="meta">
+            <span><span class="dot"></span>F-1 / J-1 visa</span>
+            <span><span class="dot"></span>I-20 or DS-2019</span>
+          </div>
+        </div>
+
+        <div class="journey-card worker" data-journey="worker">
+          <div class="icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <h3>H-1B / L-1 / O-1 Worker</h3>
+          <div class="sub">Visa-approved professional with U.S. offer</div>
+          <div class="meta">
+            <span><span class="dot"></span>I-797 approval</span>
+            <span><span class="dot"></span>Signed offer letter</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust">
+        <span>Bank-grade encryption</span>
+        <span>CFPB-compliant</span>
+        <span>FICO reporting from day 1</span>
+      </div>
+    </div>
+
+    <!-- STEP 1: IDENTITY -->
+    <div class="step" id="step-1">
+      <div class="rail">
+        <div class="tick current"></div>
+        <div class="tick"></div>
+        <div class="tick"></div>
+        <div class="tick"></div>
+      </div>
+      <div class="step-header">
+        <div class="left">
+          <div class="kicker">Step 1 of 4 · Identity</div>
+          <h2 id="s1-title">Verify your passport and visa</h2>
+        </div>
+        <div class="right">
+          ~45 sec<br><b>OFAC + SEVIS check</b>
+        </div>
+      </div>
+
+      <div class="upload-zone" id="zone-1">
+        <div class="up-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <h4>Drop your passport and visa documents</h4>
+        <p>PDF, PNG, or JPG. We parse securely and never keep originals.</p>
+        <span class="filetag" id="s1-filetag">Passport · I-20 or I-797</span>
+      </div>
+
+      <div class="sample-docs" id="s1-samples"></div>
+
+      <div class="parsing" id="parse-1">
+        <div class="file-row">
+          <div class="file-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="file-meta">
+            <div class="fname" id="s1-fname">passport_and_visa.pdf</div>
+            <div class="fsize">2.4 MB · Uploaded ·
+              <span style="color:var(--accent-2);">Encrypted</span>
+            </div>
+          </div>
+          <div class="file-check">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="checks" id="s1-checks"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-ghost" onclick="goTo('intro')">← Back</button>
+        <button class="btn btn-primary" id="s1-next" disabled onclick="goTo('step-2')">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: DOCUMENT (admission / offer) -->
+    <div class="step" id="step-2">
+      <div class="rail">
+        <div class="tick done"></div>
+        <div class="tick current"></div>
+        <div class="tick"></div>
+        <div class="tick"></div>
+      </div>
+      <div class="step-header">
+        <div class="left">
+          <div class="kicker">Step 2 of 4 · Human capital</div>
+          <h2 id="s2-title">Upload your admission letter</h2>
+        </div>
+        <div class="right">
+          ~60 sec<br><b id="s2-source">Registrar API</b>
+        </div>
+      </div>
+
+      <div class="upload-zone" id="zone-2">
+        <div class="up-icon" style="background:rgba(0,194,168,0.12);color:var(--accent-2);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h4 id="s2-head">Admission letter or transcript</h4>
+        <p id="s2-sub">We verify through the National Student Clearinghouse.</p>
+        <span class="filetag" id="s2-filetag">PDF · School letterhead</span>
+      </div>
+
+      <div class="sample-docs" id="s2-samples"></div>
+
+      <div class="parsing" id="parse-2">
+        <div class="file-row">
+          <div class="file-icon" style="background:var(--accent-2);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="file-meta">
+            <div class="fname" id="s2-fname">admission_letter.pdf</div>
+            <div class="fsize">1.1 MB · Uploaded ·
+              <span style="color:var(--accent-2);">Verified source</span>
+            </div>
+          </div>
+          <div class="file-check">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="checks" id="s2-checks"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-ghost" onclick="goTo('step-1')">← Back</button>
+        <button class="btn btn-primary" id="s2-next" disabled onclick="goTo('step-3')">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: FINANCIAL SIGNAL (funding / income) -->
+    <div class="step" id="step-3">
+      <div class="rail">
+        <div class="tick done"></div>
+        <div class="tick done"></div>
+        <div class="tick current"></div>
+        <div class="tick"></div>
+      </div>
+      <div class="step-header">
+        <div class="left">
+          <div class="kicker">Step 3 of 4 · Ability-to-pay</div>
+          <h2 id="s3-title">Show us how you will pay</h2>
+        </div>
+        <div class="right">
+          ~45 sec<br><b>Reg Z § 1026.51</b>
+        </div>
+      </div>
+
+      <div class="upload-zone" id="zone-3">
+        <div class="up-icon" style="background:rgba(245,165,36,0.12);color:var(--accent-3);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <h4 id="s3-head">Funding statement or first paystub</h4>
+        <p id="s3-sub">Assistantship letter, sponsor bank statement, offer letter, or paystub.</p>
+        <span class="filetag" id="s3-filetag">PDF · Any bank or employer</span>
+      </div>
+
+      <div class="sample-docs" id="s3-samples"></div>
+
+      <div class="parsing" id="parse-3">
+        <div class="file-row">
+          <div class="file-icon" style="background:var(--accent-3);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="file-meta">
+            <div class="fname" id="s3-fname">funding.pdf</div>
+            <div class="fsize">0.8 MB · Uploaded ·
+              <span style="color:var(--accent-2);">Encrypted</span>
+            </div>
+          </div>
+          <div class="file-check">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="checks" id="s3-checks"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-ghost" onclick="goTo('step-2')">← Back</button>
+        <button class="btn btn-primary" id="s3-next" disabled onclick="goTo('step-4')">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: CROSS-BORDER CREDIT (optional) -->
+    <div class="step" id="step-4">
+      <div class="rail">
+        <div class="tick done"></div>
+        <div class="tick done"></div>
+        <div class="tick done"></div>
+        <div class="tick current"></div>
+      </div>
+      <div class="step-header">
+        <div class="left">
+          <div class="kicker">Step 4 of 4 · Cross-border credit</div>
+          <h2>Pull your home-country credit file</h2>
+        </div>
+        <div class="right">
+          Optional · Boosts limit<br><b>via Nova Credit partner</b>
+        </div>
+      </div>
+
+      <div style="background:var(--panel-soft);border-radius:14px;padding:24px;margin-bottom:20px;">
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:18px;">
+          <div style="width:48px;height:48px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;">Connect your home-country credit bureau</div>
+            <div style="font-size:12px;color:var(--ink-3);margin-top:2px;">20+ countries available. Consumer-permissioned. CRA-compliant.</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+          <div class="country-chip" data-country="India">🇮🇳 India</div>
+          <div class="country-chip" data-country="Brazil">🇧🇷 Brazil</div>
+          <div class="country-chip" data-country="Mexico">🇲🇽 Mexico</div>
+          <div class="country-chip" data-country="South Korea">🇰🇷 South Korea</div>
+          <div class="country-chip" data-country="China">🇨🇳 China</div>
+          <div class="country-chip" data-country="Nigeria">🇳🇬 Nigeria</div>
+          <div class="country-chip" data-country="Canada">🇨🇦 Canada</div>
+          <div class="country-chip" data-country="Other">+ Other</div>
+        </div>
+
+        <div id="bureau-result" style="display:none;margin-top:18px;"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-ghost" onclick="goTo('step-3')">← Back</button>
+        <div>
+          <button class="btn btn-ghost" onclick="skipBureau()">Skip</button>
+          <button class="btn btn-primary" id="s4-next" onclick="runDecision()">Get my decision →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECISIONING SCREEN -->
+    <div class="step" id="step-decide">
+      <div style="padding:60px 20px;text-align:center;">
+        <div style="width:80px;height:80px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);margin:0 auto 24px;animation:spin 1s linear infinite;"></div>
+        <div class="kicker">Running decision engine</div>
+        <h2 style="font-family:'Fraunces',serif;font-size:28px;margin-top:8px;font-weight:600;">Assembling your profile</h2>
+        <div id="decide-log" style="margin-top:30px;max-width:460px;margin-left:auto;margin-right:auto;text-align:left;"></div>
+      </div>
+    </div>
+
+    <!-- APPROVAL SCREEN -->
+    <div class="approval" id="approval">
+      <div class="badge-large">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2><em id="approval-name">Alex</em>, you are approved.</h2>
+      <div class="subline" id="approval-sub">Your World Card is ready. Here is your offer.</div>
+
+      <div class="card-preview">
+        <div class="card-brand">World</div>
+        <div class="card-chip"></div>
+        <div class="card-num">4829  ••••  ••••  2104</div>
+        <div class="card-foot">
+          <span id="card-holder">ALEX SHARMA</span>
+          <span>01/29</span>
+        </div>
+      </div>
+
+      <div class="offer-grid">
+        <div class="offer-card">
+          <div class="oc-label">Credit Limit</div>
+          <div class="oc-value" id="approval-limit">$6,000</div>
+          <div class="oc-note">Reports to Experian, Equifax, TransUnion from day one.</div>
+        </div>
+        <div class="offer-card teal">
+          <div class="oc-label">Security Deposit</div>
+          <div class="oc-value" id="approval-deposit">$1,800</div>
+          <div class="oc-note"><span id="approval-deposit-pct">30%</span> of limit. Refundable. Sits in FDIC-insured account.</div>
+        </div>
+        <div class="offer-card amber">
+          <div class="oc-label">APR</div>
+          <div class="oc-value" id="approval-apr">19.9%</div>
+          <div class="oc-note">No annual fee. No FX markup on travel.</div>
+        </div>
+      </div>
+
+      <div class="deposit-schedule">
+        <h4>Your deposit unlocks over time</h4>
+        <div class="ds-sub">Every 6 on-time payments, we return a portion of your deposit automatically.</div>
+        <div class="ds-timeline">
+          <div class="ds-step current">
+            <div class="ds-dot">0</div>
+            <div class="ds-month">Month 0</div>
+            <div class="ds-amount" id="ds-0">$1,800</div>
+          </div>
+          <div class="ds-step future">
+            <div class="ds-dot">6</div>
+            <div class="ds-month">Month 6</div>
+            <div class="ds-amount" id="ds-6">$900</div>
+          </div>
+          <div class="ds-step future">
+            <div class="ds-dot">12</div>
+            <div class="ds-month">Month 12</div>
+            <div class="ds-amount" id="ds-12">$300</div>
+          </div>
+          <div class="ds-step future">
+            <div class="ds-dot">✓</div>
+            <div class="ds-month">Month 18</div>
+            <div class="ds-amount" id="ds-18">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compliance">
+        Decision issued under CARD Act § 1026.51 ability-to-pay and ECOA fair-lending review.<br>
+        Reported as secured credit to TransUnion, Experian, Equifax · Sponsor bank: [BaaS partner] · FDIC insured.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDE: LIVE SIGNAL PANEL -->
+  <div class="side">
+    <h3>Underwriting signals</h3>
+
+    <div class="score-display">
+      <div class="score-ring">
+        <svg width="130" height="130">
+          <circle cx="65" cy="65" r="56" class="ring-bg" stroke-width="10" fill="none"/>
+          <circle cx="65" cy="65" r="56" class="ring-fill" stroke-width="10" fill="none"
+                  stroke-linecap="round"
+                  stroke-dasharray="351.86" stroke-dashoffset="351.86"
+                  id="ring-fill"/>
+        </svg>
+        <div class="score-num">
+          <span id="score-val">—</span>
+          <span class="label">World Score</span>
+        </div>
+      </div>
+      <span class="tier-pill" id="tier-pill">Awaiting data</span>
+    </div>
+
+    <div class="sig-list">
+      <h4>Signal stack</h4>
+      <div class="sig-row" id="sig-id">
+        <div>
+          <div class="sig-name">Identity verified</div>
+          <div class="sig-detail">Passport · Visa · SEVIS / USCIS</div>
+        </div>
+        <div class="sig-weight">+0</div>
+      </div>
+      <div class="sig-row" id="sig-hc">
+        <div>
+          <div class="sig-name" id="sig-hc-name">Human capital</div>
+          <div class="sig-detail" id="sig-hc-sub">Program tier, earnings potential</div>
+        </div>
+        <div class="sig-weight" id="sig-hc-w">+0</div>
+      </div>
+      <div class="sig-row" id="sig-atp">
+        <div>
+          <div class="sig-name">Ability-to-pay</div>
+          <div class="sig-detail" id="sig-atp-sub">Verified funds or income</div>
+        </div>
+        <div class="sig-weight" id="sig-atp-w">+0</div>
+      </div>
+      <div class="sig-row" id="sig-cb">
+        <div>
+          <div class="sig-name">Cross-border credit</div>
+          <div class="sig-detail" id="sig-cb-sub">Home-country history</div>
+        </div>
+        <div class="sig-weight" id="sig-cb-w">+0</div>
+      </div>
+      <div class="sig-row" id="sig-doc">
+        <div>
+          <div class="sig-name">Document confidence</div>
+          <div class="sig-detail">OCR + liveness match</div>
+        </div>
+        <div class="sig-weight" id="sig-doc-w">+0</div>
+      </div>
+    </div>
+
+    <div class="decision-box" id="decision-box">
+      <b style="color:var(--accent-2);">APPROVED</b><br>
+      <span id="decision-text">Hybrid secured · Deposit steps down on good behavior.</span>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .country-chip {
+    padding: 12px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 12px; font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+  }
+  .country-chip:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .country-chip.selected {
+    border-color: var(--accent); background: rgba(108,92,231,0.06);
+    color: var(--accent); font-weight: 600;
+  }
+</style>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  journey: null,  // 'student' | 'worker'
+  score: 0,
+  signals: { id: 0, hc: 0, atp: 0, cb: 0, doc: 0 },
+  bureau: null,
+};
+
+// Journey-specific copy
+const J = {
+  student: {
+    name: 'Alex Sharma',
+    s1_title: 'Verify your passport and I-20',
+    s1_filetag: 'Passport · I-20 or DS-2019',
+    s1_fname: 'passport_i20.pdf',
+    s1_checks: [
+      { label: 'Passport MRZ parsed', sub: 'Name, DOB, country of issue', result: 'OK' },
+      { label: 'Biometric liveness', sub: 'Face match vs passport photo', result: '0.97' },
+      { label: 'I-20 SEVIS validation', sub: 'DHS public record lookup', result: 'ACTIVE' },
+      { label: 'OFAC + sanctions screen', sub: 'Real-time watchlist check', result: 'CLEAR' },
+    ],
+    s1_samples: [
+      { label: 'PASSPORT', title: 'India Passport · A1234567', sub: 'Issued 2022 · Valid 2032' },
+      { label: 'I-20', title: 'Columbia University · SEVIS N00319…', sub: 'F-1 Graduate · MS program' },
+      { label: 'SELFIE', title: 'Live selfie capture', sub: 'Liveness + match 0.97' },
+    ],
+    s2_source: 'Student Clearinghouse',
+    s2_head: 'Admission letter or transcript',
+    s2_sub: 'We verify through the National Student Clearinghouse.',
+    s2_filetag: 'PDF · School letterhead',
+    s2_fname: 'columbia_admission.pdf',
+    s2_title: 'Upload your admission letter',
+    s2_checks: [
+      { label: 'University accredited', sub: 'Columbia University · R1', result: 'VERIFIED' },
+      { label: 'Program tier', sub: 'MS in Operations · Top-20 program', sub_dyn: true, result: 'TIER A' },
+      { label: 'Expected graduation', sub: 'May 2026', result: 'OK' },
+      { label: 'Forecast earnings (BLS)', sub: 'Median $98K, adjusted for program', result: '$112K' },
+    ],
+    s2_samples: [
+      { label: 'ADMISSION', title: 'Columbia MSx · Class of 2026', sub: 'Full admit · $65K tuition' },
+      { label: 'TRANSCRIPT', title: 'Undergrad transcript · IIT Delhi', sub: 'GPA 9.1/10 · BTech ME' },
+      { label: 'I-20', title: 'Funded I-20', sub: 'Assistantship confirmed' },
+    ],
+    s3_head: 'Proof of funding',
+    s3_sub: 'Assistantship letter, sponsor bank statement, or I-20 funding section.',
+    s3_filetag: 'PDF · Any issuer',
+    s3_fname: 'funding_statement.pdf',
+    s3_title: 'Show us how you will pay',
+    s3_checks: [
+      { label: 'Funding source identified', sub: 'Assistantship + sponsor bank', result: 'CONFIRMED' },
+      { label: 'Annual funding total', sub: 'Tuition + stipend + living', result: '$72,400' },
+      { label: 'Debt-to-income ratio', sub: 'Conservative model', result: '18%' },
+      { label: 'Ability-to-pay test', sub: 'CARD Act § 1026.51', result: 'PASS' },
+    ],
+    s3_samples: [
+      { label: 'FUNDING', title: 'TA stipend · $38K/yr', sub: 'Letter from department chair' },
+      { label: 'SPONSOR', title: 'Parent bank statement', sub: 'HDFC Bank · 6-month avg $94K' },
+      { label: 'SCHOLARSHIP', title: 'Dean\'s Fellowship · $20K', sub: 'Renewable annually' },
+    ],
+    hc_name: 'Human capital',
+    hc_sub: 'Program tier, earnings potential',
+    atp_sub: 'Verified funds + sponsor',
+  },
+  worker: {
+    name: 'Priya Kumar',
+    s1_title: 'Verify your passport and I-797',
+    s1_filetag: 'Passport · I-797 approval',
+    s1_fname: 'passport_i797.pdf',
+    s1_checks: [
+      { label: 'Passport MRZ parsed', sub: 'Name, DOB, country of issue', result: 'OK' },
+      { label: 'Biometric liveness', sub: 'Face match vs passport photo', result: '0.98' },
+      { label: 'I-797 receipt verified', sub: 'USCIS case status lookup', result: 'APPROVED' },
+      { label: 'OFAC + sanctions screen', sub: 'Real-time watchlist check', result: 'CLEAR' },
+    ],
+    s1_samples: [
+      { label: 'PASSPORT', title: 'India Passport · A9876543', sub: 'Issued 2021 · Valid 2031' },
+      { label: 'I-797', title: 'H-1B approval · EAC2412500…', sub: 'Valid through 2027' },
+      { label: 'SELFIE', title: 'Live selfie capture', sub: 'Liveness + match 0.98' },
+    ],
+    s2_source: 'Employer verification',
+    s2_head: 'Signed offer letter',
+    s2_sub: 'We verify the employer domain and parse title, compensation, and start date.',
+    s2_filetag: 'PDF · Employer letterhead',
+    s2_fname: 'offer_letter.pdf',
+    s2_title: 'Upload your signed offer letter',
+    s2_checks: [
+      { label: 'Employer verified', sub: 'Stripe Inc. · Tier-A employer', result: 'TIER A' },
+      { label: 'Title + level parsed', sub: 'Senior Software Engineer · L5', result: 'OK' },
+      { label: 'Base salary', sub: 'From offer letter', result: '$215,000' },
+      { label: 'Total comp (base + equity)', sub: 'Vesting over 4 years', result: '$320,000' },
+    ],
+    s2_samples: [
+      { label: 'OFFER', title: 'Stripe · Sr. Software Engineer', sub: 'Base $215K + equity' },
+      { label: 'LCA', title: 'Labor Condition Application', sub: 'Prevailing wage $172K (SF)' },
+      { label: 'START DATE', title: 'July 15, 2026', sub: 'Within 30 days of I-797' },
+    ],
+    s3_head: 'First U.S. paystub or LCA wage',
+    s3_sub: 'Paystub if you have started, or LCA prevailing wage attestation if pre-arrival.',
+    s3_filetag: 'PDF · Employer or DOL',
+    s3_fname: 'paystub.pdf',
+    s3_title: 'Confirm your ability-to-pay',
+    s3_checks: [
+      { label: 'Gross pay confirmed', sub: 'Biweekly · $8,269', result: '$215K/yr' },
+      { label: 'Withholding parsed', sub: 'Federal, FICA, state', result: 'OK' },
+      { label: 'Debt-to-income ratio', sub: 'Including rent estimate', result: '22%' },
+      { label: 'Ability-to-pay test', sub: 'CARD Act § 1026.51', result: 'PASS' },
+    ],
+    s3_samples: [
+      { label: 'PAYSTUB', title: 'Stripe · July 1-15 paystub', sub: 'Net $5,612 · YTD $21,447' },
+      { label: 'LCA', title: 'LCA prevailing wage', sub: '$172K floor · DOL-filed' },
+      { label: 'DIRECT DEPOSIT', title: 'Bank of America · 3456', sub: 'ACH verified' },
+    ],
+    hc_name: 'Human capital',
+    hc_sub: 'Employer tier, role seniority',
+    atp_sub: 'Verified paystub + LCA',
+  }
+};
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const screens = ['intro', 'step-1', 'step-2', 'step-3', 'step-4', 'step-decide', 'approval'];
+
+function goTo(id) {
+  screens.forEach(s => {
+    const el = document.getElementById(s);
+    if (!el) return;
+    el.classList.remove('active');
+    if (s === id) el.classList.add('active');
+  });
+  // Intro has its own display rule (it's the intro block, not .step)
+  document.getElementById('intro').style.display = (id === 'intro') ? 'block' : 'none';
+  // Approval is special
+  document.getElementById('approval').style.display = (id === 'approval') ? 'block' : 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// JOURNEY SELECTION
+// ============================================================
+document.querySelectorAll('.journey-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.journey = card.dataset.journey;
+    setupJourney();
+    goTo('step-1');
+  });
+});
+
+function setupJourney() {
+  const j = J[state.journey];
+
+  // Step 1
+  document.getElementById('s1-title').textContent = j.s1_title;
+  document.getElementById('s1-filetag').textContent = j.s1_filetag;
+  document.getElementById('s1-fname').textContent = j.s1_fname;
+  renderSamples('s1-samples', j.s1_samples, 1);
+  renderChecks('s1-checks', j.s1_checks);
+
+  // Step 2
+  document.getElementById('s2-source').textContent = j.s2_source;
+  document.getElementById('s2-title').textContent = j.s2_title;
+  document.getElementById('s2-head').textContent = j.s2_head;
+  document.getElementById('s2-sub').textContent = j.s2_sub;
+  document.getElementById('s2-filetag').textContent = j.s2_filetag;
+  document.getElementById('s2-fname').textContent = j.s2_fname;
+  renderSamples('s2-samples', j.s2_samples, 2);
+  renderChecks('s2-checks', j.s2_checks);
+
+  // Step 3
+  document.getElementById('s3-title').textContent = j.s3_title;
+  document.getElementById('s3-head').textContent = j.s3_head;
+  document.getElementById('s3-sub').textContent = j.s3_sub;
+  document.getElementById('s3-filetag').textContent = j.s3_filetag;
+  document.getElementById('s3-fname').textContent = j.s3_fname;
+  renderSamples('s3-samples', j.s3_samples, 3);
+  renderChecks('s3-checks', j.s3_checks);
+
+  // Side panel signal labels
+  document.getElementById('sig-hc-name').textContent = j.hc_name;
+  document.getElementById('sig-hc-sub').textContent = j.hc_sub;
+  document.getElementById('sig-atp-sub').textContent = j.atp_sub;
+
+  // Approval name
+  document.getElementById('approval-name').textContent = j.name.split(' ')[0];
+  document.getElementById('card-holder').textContent = j.name.toUpperCase();
+}
+
+// ============================================================
+// SAMPLE DOCS + UPLOAD FLOW
+// ============================================================
+function renderSamples(containerId, samples, step) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  samples.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'sample-doc';
+    el.innerHTML = `
+      <div class="sd-label">${s.label}</div>
+      <div class="sd-title">${s.title}</div>
+      <div class="sd-sub">${s.sub}</div>
+    `;
+    el.addEventListener('click', () => triggerUpload(step));
+    container.appendChild(el);
+  });
+}
+
+document.getElementById('zone-1').addEventListener('click', () => triggerUpload(1));
+document.getElementById('zone-2').addEventListener('click', () => triggerUpload(2));
+document.getElementById('zone-3').addEventListener('click', () => triggerUpload(3));
+
+function renderChecks(containerId, checks) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  checks.forEach((ck, i) => {
+    const row = document.createElement('div');
+    row.className = 'check-row';
+    row.innerHTML = `
+      <div>
+        <span class="pending"></span>
+        <span class="spinner"></span>
+        <span class="tick-mark">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+      </div>
+      <div class="label">${ck.label}<span class="sub">${ck.sub}</span></div>
+      <div class="result">${ck.result}</div>
+    `;
+    c.appendChild(row);
+  });
+}
+
+function triggerUpload(step) {
+  const zone = document.getElementById('zone-' + step);
+  const samples = document.getElementById('s' + step + '-samples');
+  const parse = document.getElementById('parse-' + step);
+  const nextBtn = document.getElementById('s' + step + '-next');
+
+  zone.style.display = 'none';
+  samples.style.display = 'none';
+  parse.classList.add('active');
+
+  // Run checks
+  const checks = parse.querySelectorAll('.check-row');
+  let i = 0;
+  const run = () => {
+    if (i > 0) checks[i-1].classList.remove('active');
+    if (i > 0) checks[i-1].classList.add('done');
+    if (i >= checks.length) {
+      nextBtn.disabled = false;
+      applySignalFromStep(step);
+      return;
+    }
+    checks[i].classList.add('active');
+    i++;
+    setTimeout(run, 650);
+  };
+  setTimeout(run, 300);
+}
+
+// ============================================================
+// SIGNAL + SCORE UPDATES
+// ============================================================
+function applySignalFromStep(step) {
+  if (step === 1) {
+    state.signals.id = 10;
+    state.signals.doc = 8;
+    activateSignal('sig-id', '+' + state.signals.id);
+    activateSignal('sig-doc', '+' + state.signals.doc);
+    // Show "Verified" on the identity row rather than a weight
+    document.querySelector('#sig-id .sig-weight').textContent = 'Verified';
+    document.querySelector('#sig-id .sig-weight').style.color = 'var(--accent-2)';
+    document.getElementById('sig-doc-w').textContent = '+' + state.signals.doc;
+  }
+  if (step === 2) {
+    state.signals.hc = 24;
+    activateSignal('sig-hc', '+' + state.signals.hc);
+    document.getElementById('sig-hc-w').textContent = '+' + state.signals.hc;
+  }
+  if (step === 3) {
+    state.signals.atp = 28;
+    activateSignal('sig-atp', '+' + state.signals.atp);
+    document.getElementById('sig-atp-w').textContent = '+' + state.signals.atp;
+  }
+  updateScore();
+}
+
+function activateSignal(id, valueText) {
+  const el = document.getElementById(id);
+  el.classList.add('on');
+}
+
+function updateScore() {
+  // total possible: 10 + 8 + 24 + 20 + 28 = 90 base, out of 100
+  const s = state.signals;
+  const raw = s.id + s.doc + s.hc + s.atp + s.cb;
+  const outOf = 100;
+  const pct = Math.min(raw / outOf, 1);
+
+  // ring
+  const circumference = 351.86;
+  document.getElementById('ring-fill').style.strokeDashoffset = circumference * (1 - pct);
+
+  // color shift
+  const ring = document.getElementById('ring-fill');
+  if (pct >= 0.75) ring.style.stroke = 'var(--accent-2)';
+  else if (pct >= 0.45) ring.style.stroke = 'var(--accent)';
+  else ring.style.stroke = 'var(--accent-3)';
+
+  // score number
+  const displayScore = Math.round(300 + pct * 550); // map to 300-850 FICO-feeling range
+  document.getElementById('score-val').textContent = displayScore;
+
+  // tier pill
+  const tierPill = document.getElementById('tier-pill');
+  if (pct >= 0.8) { tierPill.textContent = 'Prime candidate'; tierPill.style.background = 'rgba(0,194,168,0.2)'; tierPill.style.color = 'var(--accent-2)'; }
+  else if (pct >= 0.55) { tierPill.textContent = 'Approvable · hybrid'; tierPill.style.background = 'rgba(108,92,231,0.2)'; tierPill.style.color = 'var(--accent)'; }
+  else if (pct >= 0.25) { tierPill.textContent = 'Building profile'; tierPill.style.background = 'rgba(245,165,36,0.2)'; tierPill.style.color = 'var(--accent-3)'; }
+  else { tierPill.textContent = 'Awaiting data'; }
+
+  // decision box
+  if (pct >= 0.55) {
+    document.getElementById('decision-box').classList.add('on');
+    const deposit = pct >= 0.8 ? '20-30% deposit' : pct >= 0.65 ? '30-50% deposit' : '50-70% deposit';
+    document.getElementById('decision-text').textContent = 'Hybrid secured · ' + deposit + ' · Steps down on 6 on-time payments.';
+  }
+}
+
+// ============================================================
+// BUREAU (STEP 4)
+// ============================================================
+document.querySelectorAll('.country-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.country-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    state.bureau = chip.dataset.country;
+    runBureauPull(chip.dataset.country);
+  });
+});
+
+function runBureauPull(country) {
+  const result = document.getElementById('bureau-result');
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;">
+      <div class="spinner" style="width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+      <span style="font-size:13px;color:var(--ink-2);">Pulling ${country} credit bureau via Nova Credit Passport…</span>
+    </div>
+  `;
+
+  setTimeout(() => {
+    // Vary results a bit by country
+    const data = {
+      India: { score: 784, tradelines: 6, avgAge: '4.2 yrs', ontime: '98%' },
+      Brazil: { score: 712, tradelines: 5, avgAge: '3.1 yrs', ontime: '95%' },
+      Mexico: { score: 698, tradelines: 4, avgAge: '2.8 yrs', ontime: '94%' },
+      'South Korea': { score: 802, tradelines: 7, avgAge: '5.1 yrs', ontime: '99%' },
+      China: { score: 760, tradelines: 5, avgAge: '3.8 yrs', ontime: '97%' },
+      Nigeria: { score: 670, tradelines: 3, avgAge: '2.1 yrs', ontime: '91%' },
+      Canada: { score: 772, tradelines: 6, avgAge: '4.6 yrs', ontime: '96%' },
+      Other: { score: 720, tradelines: 4, avgAge: '3.0 yrs', ontime: '94%' },
+    }[country] || { score: 720, tradelines: 4, avgAge: '3.0 yrs', ontime: '94%' };
+
+    result.innerHTML = `
+      <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">${country} credit file pulled</div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent-2);background:rgba(0,194,168,0.1);padding:3px 8px;border-radius:100px;">NOVA CREDIT · VERIFIED</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Local score</div><div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;">${data.score}</div></div>
+          <div><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Tradelines</div><div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;">${data.tradelines}</div></div>
+          <div><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Avg age</div><div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;">${data.avgAge}</div></div>
+          <div><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">On-time</div><div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--accent-2);">${data.ontime}</div></div>
+        </div>
+      </div>
+    `;
+
+    // Boost signal
+    state.signals.cb = data.score >= 780 ? 20 : data.score >= 720 ? 16 : data.score >= 680 ? 12 : 8;
+    activateSignal('sig-cb', '+' + state.signals.cb);
+    document.getElementById('sig-cb-sub').textContent = country + ' · ' + data.score + ' local score';
+    document.getElementById('sig-cb-w').textContent = '+' + state.signals.cb;
+    updateScore();
+  }, 1400);
+}
+
+function skipBureau() {
+  state.signals.cb = 0;
+  runDecision();
+}
+
+// ============================================================
+// DECISION ENGINE
+// ============================================================
+function runDecision() {
+  goTo('step-decide');
+
+  const log = document.getElementById('decide-log');
+  log.innerHTML = '';
+  const lines = [
+    'Assembling verified signals…',
+    'Running CARD Act § 1026.51 ability-to-pay…',
+    'Cross-referencing ECOA / Reg B fair-lending rules…',
+    'Sizing credit line against risk tier…',
+    'Structuring hybrid secured deposit…',
+    'Pre-authorizing sponsor bank line…',
+  ];
+  let i = 0;
+  const tick = () => {
+    if (i >= lines.length) {
+      setTimeout(renderApproval, 400);
+      return;
+    }
+    const row = document.createElement('div');
+    row.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-2);padding:7px 0;display:flex;gap:10px;opacity:0;animation:fadeUp 0.3s forwards;";
+    row.innerHTML = `<span style="color:var(--accent-2);">›</span> ${lines[i]}`;
+    log.appendChild(row);
+    i++;
+    setTimeout(tick, 450);
+  };
+  tick();
+}
+
+function renderApproval() {
+  goTo('approval');
+
+  const s = state.signals;
+  const total = s.id + s.doc + s.hc + s.atp + s.cb;
+  const pct = Math.min(total / 100, 1);
+
+  // Credit limit: $1K base + up to $14K based on signal strength
+  const limit = Math.round((1000 + pct * 14000) / 500) * 500;
+
+  // Deposit %: 70% at low score → 20% at top
+  let depositPct;
+  if (pct >= 0.8) depositPct = 20;
+  else if (pct >= 0.7) depositPct = 30;
+  else if (pct >= 0.55) depositPct = 50;
+  else depositPct = 70;
+
+  const deposit = Math.round((limit * depositPct / 100) / 50) * 50;
+
+  // APR: 18% at top → 24% at lower end
+  const apr = (24 - pct * 6).toFixed(1);
+
+  // Populate
+  document.getElementById('approval-limit').textContent = '$' + limit.toLocaleString();
+  document.getElementById('approval-deposit').textContent = '$' + deposit.toLocaleString();
+  document.getElementById('approval-deposit-pct').textContent = depositPct + '%';
+  document.getElementById('approval-apr').textContent = apr + '%';
+
+  // Step-down schedule
+  const m0 = deposit;
+  const m6 = Math.round((deposit * 0.5) / 50) * 50;
+  const m12 = Math.round((deposit * 0.17) / 50) * 50;
+  document.getElementById('ds-0').textContent = '$' + m0.toLocaleString();
+  document.getElementById('ds-6').textContent = '$' + m6.toLocaleString();
+  document.getElementById('ds-12').textContent = '$' + m12.toLocaleString();
+  document.getElementById('ds-18').textContent = '$0';
+
+  // Subtitle
+  const subtitles = {
+    student: 'Your academic profile, funding, and home-country history add up. Here is your offer.',
+    worker: 'Your visa, employer tier, and verified earnings qualify you for our prime tier.'
+  };
+  document.getElementById('approval-sub').textContent = subtitles[state.journey];
+}
+
+// ============================================================
+// RESET
+// ============================================================
+document.getElementById('resetBtn').addEventListener('click', () => {
+  // Reset state
+  state.journey = null;
+  state.score = 0;
+  state.signals = { id: 0, hc: 0, atp: 0, cb: 0, doc: 0 };
+  state.bureau = null;
+
+  // Reset UI
+  document.querySelectorAll('.sig-row').forEach(r => r.classList.remove('on'));
+  document.querySelectorAll('.sig-weight').forEach(w => w.textContent = '+0');
+  document.getElementById('decision-box').classList.remove('on');
+  document.getElementById('ring-fill').style.strokeDashoffset = 351.86;
+  document.getElementById('score-val').textContent = '—';
+  const tp = document.getElementById('tier-pill');
+  tp.textContent = 'Awaiting data';
+  tp.style.background = 'rgba(108,92,231,0.2)';
+  tp.style.color = 'var(--accent)';
+
+  // Reset each step's upload state
+  for (let i = 1; i <= 3; i++) {
+    const zone = document.getElementById('zone-' + i);
+    const samples = document.getElementById('s' + i + '-samples');
+    const parse = document.getElementById('parse-' + i);
+    const btn = document.getElementById('s' + i + '-next');
+    if (zone) zone.style.display = 'block';
+    if (samples) samples.style.display = 'grid';
+    if (parse) {
+      parse.classList.remove('active');
+      parse.querySelectorAll('.check-row').forEach(r => { r.classList.remove('active'); r.classList.remove('done'); });
+    }
+    if (btn) btn.disabled = true;
+  }
+
+  // Reset bureau
+  document.querySelectorAll('.country-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('bureau-result').style.display = 'none';
+
+  goTo('intro');
+});
+
+// Initial state
+document.getElementById('intro').style.display = 'block';
+screens.forEach(s => {
+  if (s !== 'intro') {
+    const el = document.getElementById(s);
+    if (el) el.style.display = '';
+  }
+});
+</script>
+</body>
+</html>
